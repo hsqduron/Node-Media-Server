@@ -509,9 +509,14 @@ const config = {
         app: 'live',
         //vc: 'libx264',
         hlsFlags: '[hls_time=2:hls_list_size=2:hls_flags=delete_segments]',
-	       //vcParam: ['-force_key_frames', '"expr:gte(t,n_forced*1)"','-max_muxing_queue_size','1024','-hls_time','2','-hls_list_size','2','-hls_flags','delete_segments'],
-        //注意，系统默认的 -c:v 参数是copy，此时切片的时间并不能按hls_time的设定来进行切分，此时要启用 libx264转码才行，但当指定了vc参数是libx264时，命令行的格式再采用hlsFlags就会出现命令行错误，此时要注释hlsFlags，而启用vcParams参数，并将切片时间等参数写到 vcParam 中
-        //要使用 libx264 ，需要在安装 ffmpeg 时，启用 --enable-libx264，此时要先安装 libx264 ，在编译 libx264时，一定要 --enable-shared，否则就会在编译ffmpeg时，由于找不到 libx264.so 而失败
+	//vcParam: ['-force_key_frames', '"expr:gte(t,n_forced*1)"','-max_muxing_queue_size','1024','-hls_time','2','-hls_list_size','2','-hls_flags','delete_segments'],
+        //注意，系统默认的 -c:v 参数是copy，此时切片的时间并不能按hls_time的设定来进行切分，此时要启用 libx264转码才行，
+	//但当指定了vc参数是libx264时，命令行的格式再采用hlsFlags就会出现命令行错误，此时要注释hlsFlags，而启用vcParams参数，
+	//并将切片时间等参数写到 vcParam 中，使用 vcParam 会有另外两个问题，因为 node_trans_session.js 会在命令行后面增加
+	//一个“|”号，会导致命令格式不正确而不能切片，这时要修改node_trans_session.js才行，另外，还会导致另一个问题就是过期的
+	//切片不会自动删除
+        //要使用 libx264 ，需要在安装 ffmpeg 时，启用 --enable-libx264，
+	//此时要先安装 libx264 ，在编译 libx264时，一定要 --enable-shared，否则就会在编译ffmpeg时，由于找不到 libx264.so 而失败
         //参考 https://blog.csdn.net/u014552102/article/details/103302731
         dash: true,
         dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
